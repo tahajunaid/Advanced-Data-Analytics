@@ -23,37 +23,17 @@ unique(data$packer_type)
 #null values
 lapply(data,function(x) { length(which(is.na(x)))})
 
-
-#distribution plots
-library(purrr)
-library(tidyr)
-library(ggplot2)
-
-df %>%
-  keep(is.numeric) %>% 
-  gather() %>% 
-  ggplot(aes(value)) +
-  facet_wrap(~ key, scales = "free") +
-  geom_histogram()
-
-
-#remove variables that do not follow Normal Distribution
-#df = subset(data, select = -c(FH_char1,FH_char11,FH_char13,FH_char14,
-#                            SectionAlignment,FileAlignment,OH_DLLchar5,
-#                            OH_DLLchar6, OH_DLLchar10))
-
 #correlation plot
-M <- cor(df)
+M <- cor(data)
 corrplot(M, method = "circle",type="lower")
-colnames(df)
+colnames(data)
 
 #dropping variables with high correlation
-df = subset(df, select = -c(e_cblp,e_cp,FH_char0,FH_char2,FH_char3,SizeOfCode,
-                            SizeOfInitializedData,MajorSubsystemVersion,
-                            MajorOperatingSystemVersion,MinorImageVersion,
-                            AddressOfEntryPoint,BaseOfCode,OH_DLLchar0,OH_DLLchar2,
-                            sus_sections,SizeOfHeapReserve,SizeOfStackReserve,
-                            non_sus_sections,packer))
+df = subset(data, select = -c(e_cblp,e_cp,SizeOfCode,SizeOfInitializedData
+                              ,MajorSubsystemVersion,MinorOperatingSystemVersion,
+                              MajorImageVersion,AddressOfEntryPoint,BaseOfData,
+                              SizeOfStackReserve,SizeOfHeapReserve,sus_sections,
+                              non_sus_sections))
 M <- cor(df)
 corrplot(M, method = "circle",type="lower")
 
@@ -66,7 +46,7 @@ for(i in 1:ncol(df)){
 }
 
 #remove outliers
-for(i in c(4,5,8,15,17,18,21,23,13,34,36,37,38,39,40)){
+for(i in c(1,2,3,4,5,6,23,24,25,29,30,31,32,33,34,51,52,53,54)){
   row.names(df) <- NULL
   #boxplot(df[,i],main=colnames(df[i]))
   lower_bound <- quantile(df[,i], 0.025)
@@ -76,6 +56,17 @@ for(i in c(4,5,8,15,17,18,21,23,13,34,36,37,38,39,40)){
   df<-df[-outlier_ind, ]
 }
 
+#distribution plots
+library(purrr)
+library(tidyr)
+library(ggplot2)
+
+df %>%
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+  facet_wrap(~ key, scales = "free") +
+  geom_histogram()
 
 library(caret)
 set.seed(101)
