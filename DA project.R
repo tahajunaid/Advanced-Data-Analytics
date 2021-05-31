@@ -75,7 +75,7 @@ sample <- sample.int(n = nrow(data), size = floor(.75*nrow(data)), replace = F)
 train <- data[sample, ]
 test  <- data[-sample, ]
 #Logistic Regression
-mylogit <- glm(class ~ ., data = data, family = "binomial")
+mylogit <- glm(class ~ ., data = train, family = "binomial")
 summary(mylogit)
 logitResult=predict(mylogit, newdata = test, type = "response")
 confusionMatrix(table(round(logitResult), test$class))
