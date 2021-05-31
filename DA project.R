@@ -71,6 +71,13 @@ df %>%
 library(caret)
 set.seed(101)
 data<-df
+#data<-scale(subset(df, select = -c(class)))
+#data<-as.data.frame(data)
+#data<-cbind.data.frame(data,df$class)
+#data<-data[,which(unlist(lapply(data, function(x) !all(is.na(x)))))]
+
+dim(data)
+head(data)
 sample <- sample.int(n = nrow(data), size = floor(.75*nrow(data)), replace = F)
 train <- data[sample, ]
 test  <- data[-sample, ]
@@ -79,5 +86,27 @@ mylogit <- glm(class ~ ., data = train, family = "binomial")
 summary(mylogit)
 logitResult=predict(mylogit, newdata = test, type = "response")
 confusionMatrix(table(round(logitResult), test$class))
+
+
+#SVM
+library(e1071)
+classifier = svm(formula = class ~ .,
+                 data = train,
+                 type = 'C-classification',
+                 kernel='polynomial',
+                 na.action =
+                   na.omit, scale = TRUE)
+print(classifier)
+y_pred = predict(classifier, newdata = test)
+confusionMatrix(table(y_pred, test$class))
+
+#Random Forest
+library(randomForest)
+library(caret)
+model = randomForest( class~ ., data=train)
+print(model)
+y_pred = predict(model, newdata = test)
+confusionMatrix(as.factor(test$class),as.factor(round(y_pred)))
+
 
 
