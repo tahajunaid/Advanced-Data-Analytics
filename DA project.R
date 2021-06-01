@@ -108,5 +108,22 @@ print(model)
 y_pred = predict(model, newdata = test)
 confusionMatrix(as.factor(test$class),as.factor(round(y_pred)))
 
+#Naive Bayes
+NB=naiveBayes(as.factor(class)~ ., data=train)
+NB
+y_pred = predict(NB, newdata = test)
+confusionMatrix(as.factor(test$class),as.factor(y_pred))
+
+#Decision Tree
+library(party)
+library(magrittr)
+DTmodel<- ctree(as.factor(class) ~ ., train)
+plot(DTmodel)
+y_pred<-predict(DTmodel, test) 
+confusionMatrix(as.factor(test$class),as.factor(y_pred))
+
+#Bagging
+
+#boosting
 
 
