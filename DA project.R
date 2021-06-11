@@ -24,6 +24,22 @@ unique(data$packer_type)
 #null values
 lapply(data,function(x) { length(which(is.na(x)))})
 
+#various correlation measures
+cor(data$e_maxalloc, data$NumberOfSections, method = "pearson")
+cor.test(data$e_maxalloc, data$NumberOfSections, method="pearson")
+
+cor(data$e_maxalloc, data$NumberOfSections, method = "kendall")
+cor.test(data$e_maxalloc, data$NumberOfSections, method="kendall")
+
+cor(data$e_maxalloc, data$NumberOfSections, method = "spearman")
+cor.test(data$e_maxalloc, data$NumberOfSections, method="spearman")
+
+library("ggpubr")
+ggscatter(data, x = "e_maxalloc", y = "NumberOfSections", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "e_maxalloc", ylab = "NumberOfSections")
+
 #correlation plot
 M <- cor(data)
 corrplot(M, method = "circle",type="lower")
@@ -53,7 +69,7 @@ for(i in c(1,2,3,4,5,6,23,24,25,29,30,31,32,33,34,51,52,53,54)){
   lower_bound <- quantile(df[,i], 0.025)
   upper_bound <- quantile(df[,i], 0.975)
   outlier_ind <- which(df[,i] < lower_bound | df[,i] > upper_bound)
-  print(paste(i,"--",length(outlier_ind),"--",colnames(df[i]),dim(df)[1]))
+  #print(paste(i,"--",length(outlier_ind),"--",colnames(df[i]),dim(df)[1]))
   df<-df[-outlier_ind, ]
 }
 
